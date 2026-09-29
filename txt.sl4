@@ -1,3 +1,1 @@
-system "ls"
-system "whoami"
-system "tail"
+system "echo salve"
