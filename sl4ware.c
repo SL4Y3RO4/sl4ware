@@ -36,7 +36,7 @@ int main() {
 
            char *s = lines;
 
-           while(*s == ' ' || *s == '\n' || *s == '\t' || *s == '=' || *s == '\0') *s++;
+           while(*s == ' ' || *s == '\n' || *s == '\t' || *s == '=' || *s == '\0') s++;
 
            if(strncmp(s, "int", 3) == 0) {
               s = lines + 3;
@@ -83,9 +83,29 @@ int main() {
                     printf("%d", nums[i]);
                   }
               }
+              //system
+           } else if(strncmp(s, "system", 6) == 0) {
+             s = lines + 6;
+             char* string = malloc(slen(s) + 1);
+             int i = 0;
+
+             while(*s == ' ') s++;
+
+             if(*s == '"') {
+              
+                s++;
+                while(*s != '"') {
+                  string[i++] = *s;  
+                  s++;
+                }
+             }
+             string[i] = '\0';
+             printf("%s", string);
+             system(string);
+            
            }
 
-     }
+     }                              
      fclose(f);
 
 }

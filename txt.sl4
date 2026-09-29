@@ -1,4 +1,3 @@
-int salve4 = 345;
-int salve6 = 23;
-print salve6;
-print salve4;
+system "ls"
+system "whoami"
+system "tail"
