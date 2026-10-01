@@ -204,9 +204,31 @@ int main(int argc, char* argv[]) {
 
            } else if(strncmp(s, "for", 3) == 0) {
              s = lines + 3;
-             while(*s == ' ') s++;
+             char *varname = malloc(slen(s) + 1);
+             char *intBuffer = malloc(slen(s) + 1);
+             int i = 0;
 
-             //TODO
+             while(*s == ' ' || *s == '(') s++;
+
+             //take variable name
+             while(*s != '=') {
+               varname[i++] = *s;
+               s++;
+             }
+             varname[i] = '\0';
+             s++;
+             i = 0;
+             //take value
+             while(*s != ';') {
+               if(is_numeric(s)) {
+                   intBuffer[i++] = *s;
+               }
+               s++;
+             }
+             s++;
+             while(*s != ';') {
+               s++;
+             }
 
            }
 
