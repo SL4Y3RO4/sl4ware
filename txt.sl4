@@ -1,1 +1,6 @@
-system "echo salve"
+string h = whoami;
+string df = salve;
+df = ls;
+system h;
+
+

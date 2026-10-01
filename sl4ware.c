@@ -160,6 +160,7 @@ int main(int argc, char* argv[]) {
              char *string = malloc(slen(s) + 1);
              int i = 0;
 
+             //find varname and store in a vector
              while(*s != '=') {
                  if(is_lowcase(s) || is_numeric(s)) {
                     varname[i++] = *s;
@@ -169,7 +170,7 @@ int main(int argc, char* argv[]) {
              varname[i] = '\0';
              varnames[numl++] = varname;
 
-             if(*s == '=') {
+             if(*s == '=') {  
                   s++;
                   i = 0;
                   while(*s != ';') {
@@ -178,11 +179,35 @@ int main(int argc, char* argv[]) {
                      }
                      s++;
                   }
+             
+            }
+             string[i] = '\0';
+             strvec[numstr++] = string;     
+              
+             //variable
+           } else if(strncmp(s, varnames[numl-1], slen(varnames[numl-1])) == 0) {
+             s = lines + slen(varnames[numl-1]);
+             char *string = malloc(slen(varnames[numl-1]) + 1);
+             int i = 0;
+
+             while(*s == ' ') s++;
+
+             if(*s == '=') {
+                s++;
+                while(*s != ';') {
+                    string[i++] = *s;
+                    s++;
+                }
              }
              string[i] = '\0';
-             strvec[numstr++] = string;
-             
-                   
+             strcpy(strvec[numstr-1], string);
+
+           } else if(strncmp(s, "for", 3) == 0) {
+             s = lines + 3;
+             while(*s == ' ') s++;
+
+             //TODO
+
            }
 
      }                              
