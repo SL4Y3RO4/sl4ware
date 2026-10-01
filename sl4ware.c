@@ -19,6 +19,11 @@ int slen(char *s) {
      return i;
 }
 
+int is_opperator(char *s) {
+    return *s == '+' || *s == '-' || *s == '/' || *s == '*' ||
+           *s == '<' || *s == '>' || *s == '=' || *s == '!';
+}
+
 int is_numeric(char *s) {
       return *s >= '0' && *s <= '9';
 }
@@ -202,11 +207,15 @@ int main(int argc, char* argv[]) {
              string[i] = '\0';
              strcpy(strvec[numstr-1], string);
 
+             //for
            } else if(strncmp(s, "for", 3) == 0) {
              s = lines + 3;
+             char op = '\0';
              char *varname = malloc(slen(s) + 1);
              char *intBuffer = malloc(slen(s) + 1);
+             char *final_num = malloc(slen(s) + 1);
              int i = 0;
+             int is_db_inc = 1;
 
              while(*s == ' ' || *s == '(') s++;
 
@@ -225,10 +234,29 @@ int main(int argc, char* argv[]) {
                }
                s++;
              }
+             intBuffer[i] = '\0';
              s++;
+             int j = 0;
+             i = 0;
              while(*s != ';') {
+               if(is_operator(s)) {
+                   op = *s;
+               }
+
+               if(is_numeric(*s)) {
+                  final_num[j++] = *s;
+               }  
                s++;
              }
+              final_num[j++] = '\0';
+              s++;
+              while(*s != ')') {
+                 if(strncmp(s, "++", 2) == 0) {
+                    is_db_inc = 1;
+                 }
+                 s++;
+              }
+              
 
            }
 
