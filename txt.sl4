@@ -1,5 +1,7 @@
-    int i = 0;
-        for(i = 0; i < 3; i++) {
-             
-        }
+int i = 0;
+for 1 < 3 {
+   print i;
+}
+
+      
 

@@ -19,7 +19,7 @@ int slen(char *s) {
      return i;
 }
 
-int is_opperator(char *s) {
+int is_operator(char *s) {
     return *s == '+' || *s == '-' || *s == '/' || *s == '*' ||
            *s == '<' || *s == '>' || *s == '=' || *s == '!';
 }
@@ -211,52 +211,47 @@ int main(int argc, char* argv[]) {
            } else if(strncmp(s, "for", 3) == 0) {
              s = lines + 3;
              char op = '\0';
-             char *varname = malloc(slen(s) + 1);
              char *intBuffer = malloc(slen(s) + 1);
              char *final_num = malloc(slen(s) + 1);
              int i = 0;
              int is_db_inc = 1;
 
-             while(*s == ' ' || *s == '(') s++;
+             while(*s == ' ') s++;
 
-             //take variable name
-             while(*s != '=') {
-               varname[i++] = *s;
-               s++;
-             }
-             varname[i] = '\0';
-             s++;
-             i = 0;
-             //take value
-             while(*s != ';') {
-               if(is_numeric(s)) {
-                   intBuffer[i++] = *s;
-               }
-               s++;
-             }
-             intBuffer[i] = '\0';
-             s++;
-             int j = 0;
-             i = 0;
-             while(*s != ';') {
-               if(is_operator(s)) {
-                   op = *s;
-               }
 
-               if(is_numeric(*s)) {
-                  final_num[j++] = *s;
-               }  
-               s++;
-             }
-              final_num[j++] = '\0';
-              s++;
-              while(*s != ')') {
-                 if(strncmp(s, "++", 2) == 0) {
-                    is_db_inc = 1;
+             while(*s != '<'){
+                 if(is_numeric(s)) {
+                    intBuffer[i++] = *s;
                  }
                  s++;
-              }
-              
+             }
+             intBuffer[i] = '\0';
+             int u = atoi(intBuffer);
+             //s++;
+             i = 0;
+             while(*s != '{') {
+                  if(is_numeric(s)) {
+                     final_num[i++] = *s;
+                  }
+                  s++;
+             }
+             final_num[i] = '\0';
+             int fi = atoi(final_num);
+            
+             for(int i = u; i < fi; i++) {
+                  while(fgets(lines, 500, f) != NULL) {
+
+                      lines[strcspn(lines, "\n")] = '\0';
+
+                      while(*s == ' ' || *s == '\n' || *s != '\t') s++;
+
+                      if(*lines != '}') {
+                         break;
+                         fclose(f);
+                      }
+                  }
+             }
+             fclose(f);
 
            }
 
