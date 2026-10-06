@@ -39,13 +39,31 @@ int find_var(char *varname) {
 	return -1;
 }
 
+char *conc(char *a, char *b) {
+	char *str = malloc((strlen(a) + strlen(b)) + 1);
+	int k = 0;
+	
+	while(*a) {
+		str[k++] = *a;
+		a++;
+	}
+	
+	while(*b) {
+		str[k++] = *b;
+		b++;
+	}
+	
+	str[k] = '\0';
+	return str;
+}
+
 
 void exec_line(FILE *f, char* s) {
 	
 	//int statement
-	if(strncmp(lines, "int", 3) == 0) {
+	if(strncmp(s, "int", 3) == 0) {
 		type[numtype++] = INT;
-		s = lines + 3;
+		s = s + 3;
 		char *varname = malloc(strlen(s) + 1);
 		char *intBuff = malloc(strlen(s) + 1);
 		int i = 0;
@@ -77,7 +95,7 @@ void exec_line(FILE *f, char* s) {
 	   //string statement
 	} else if(strncmp(s, "string", 6) == 0) {
 	   type[numtype++] = STR;
-	   s = lines + 6;
+	   s = s + 6;
 	   char *varname = malloc(strlen(s) + 1);
 	   char *string = malloc(strlen(s) + 1);
 	   int i = 0;
@@ -103,7 +121,7 @@ void exec_line(FILE *f, char* s) {
 	    
 	  //syscall statement  
     } else if(strncmp(s, "syscall", 7) == 0) {
-      s = lines + 7;
+      s = s + 7;
 	  char *varname = malloc(strlen(s) + 1);
 	  int i = 0;
 	  
@@ -125,9 +143,9 @@ void exec_line(FILE *f, char* s) {
 		  	   break;
 		  }
 	  }	  
-	
+	  //print statement
 	} else if(strncmp(s, "print", 5) == 0) {
-		s = lines + 5;
+		s = s + 5;
 		char *varname = malloc(strlen(s) + 1);
 		int i = 0;
 		
@@ -150,6 +168,82 @@ void exec_line(FILE *f, char* s) {
 			
 			}
 		}
+		//add statement 
+	} else if(strncmp(s, "add", 3) == 0) {
+		s = s + 3;
+		char *vname = malloc(strlen(s) + 1);
+		char *integer = malloc(strlen(s) + 1);
+		int vi = 0;
+		int i = 0;
+		
+		while(*s != ' ') s++;
+		
+		//take variable name
+		while(*s != ',') {
+			if(is_numeric(s) || is_letter(s)) {
+				vname[vi++] = *s;
+			}
+			s++;
+		}
+		vname[vi] = '\0';
+	  
+	      //take int value
+	  	  while(*s != ';') {
+	    	if(is_numeric(s)) {
+	    	   integer[i++] = *s;	
+			}
+	    	s++;
+	      }
+		//increase current variable
+		for(int i = 0; i < numvarname; i++) {
+		   if(strcmp(vname, varnames[i]) == 0) {
+		   	  nums[i] = nums[i] + atoi(integer);
+		   }	   
+		}
+	
+	   //mv statement
+	} else if(strncmp(s, "mv", 2) == 0) {
+		s = s + 2;
+		char *vname = malloc(strlen(s) + 1);
+		char *vname2 = malloc(strlen(s) + 1);
+		int vi = 0;
+		int k = 0;
+		
+		while(*s == ' ') s++;
+
+        //take variable name1	
+        while(*s != ',') {
+        	if(is_numeric(s) || is_letter(s)) {
+        	 	vname[vi++] = *s;
+			}
+        	s++;
+		}
+		vname[vi++] = '\0';
+		s++;
+		vi = 0;
+		//take variable name2	
+        while(*s != ';') {
+        	if(is_numeric(s) || is_letter(s)) {
+        	 	vname2[vi++] = *s;
+			}
+        	s++;
+		}
+		vname2[vi++] = '\0';
+		
+		printf("%s", vname2);
+				
+		char *merge = malloc(strlen(vname2) + 1);
+		
+		for(int i = 0; i < numvarname; i++) {
+			if((strcmp(vname, varnames[i]) == 0 && type[i] == STR)  && (strcmp(vname2, varnames[k]) == 0) && type[k] == INT) {
+				sprintf(merge, "%d", nums[k-1]);
+			}
+			k++;
+		}
+		merge[k] = '\0';
+		printf("%s", merge);
+		
+		
 	  //var statement
 	} else if(strncmp(s, varnames[numvarname-1], strlen(varnames[numvarname-1])) == 0) {
 	  char *p = s;
@@ -168,7 +262,6 @@ void exec_line(FILE *f, char* s) {
 	  
 	   int idx = find_var(vname);
 	   if (idx < 0) {
-	  	  /* variabile non trovata: non fare nulla */
 	  	  return;
 	   }
 	  
@@ -243,9 +336,9 @@ int main(int argc, char *argv[]) {
 	    char *s = lines;		          
 		while(*s == ' ' || *s == '\t' || *s == '\n' || *s == '=' || *s == '\0') s++;
 		
-		//for
+		//for statement
 		if(strncmp(s, "for", 3) == 0) {
-			s = lines + 3;
+			s = s + 3;
 			int *intBuffer = malloc(strlen(s) + 1);
 			int i = 0;
 			char op = '\0';
@@ -262,7 +355,10 @@ int main(int argc, char *argv[]) {
 				
 			for(int i = intBuffer[0]; i < intBuffer[1]; i++) {
 				
+				//place pointer here and repeat instruction
 				fseek(file, init_smt, SEEK_SET);
+				
+				//shift all!
 				while(fgets(lines, 500, file) != NULL) {
 					
 					lines[strcspn(lines, "\n")] = '\0';

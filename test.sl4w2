@@ -1,7 +1,5 @@
-string j = salve;
-int i = 0;
-for 1 < 5 (
-syscall ping -a -n 1 -w 10 8.8.8.8;
-i++;
-)
-print i;
+string str = salve;
+int i = 2;
+    mv str, i;
+	print i;
+	print str;
