@@ -162,8 +162,8 @@ void exec_line(FILE *f, char* s) {
 		for(int i = 0; i < numvarname; i++) {
 			if(strcmp(varname, varnames[i]) == 0) {
 				switch(type[i]) {
-					case INT: printf("%d", nums[i]); break;
-					case STR: printf("%s", strings[i]); break;
+					case INT: printf("%d", nums[i - 1]); break;
+					case STR: printf("%s", strings[i - 1]); break;
 				}
 			
 			}
@@ -230,19 +230,45 @@ void exec_line(FILE *f, char* s) {
 		}
 		vname2[vi++] = '\0';
 		
-		printf("%s", vname2);
-				
-		char *merge = malloc(strlen(vname2) + 1);
+		char *take_int = malloc(strlen(strings[0]) + 1);
+		
+		int str_check1 = 0;
+		int str_check2 = 0;
+		int idx_str = -1;
+		int idx_int = -1;
+		
+	    for(int i = 0; i < numvarname; i++) {
+	    	if(strcmp(vname, varnames[i]) == 0 && type[i] == STR) {
+	    		str_check1 = 1;
+	    		idx_str = i;
+			}
+		}
 		
 		for(int i = 0; i < numvarname; i++) {
-			if((strcmp(vname, varnames[i]) == 0 && type[i] == STR)  && (strcmp(vname2, varnames[k]) == 0) && type[k] == INT) {
-				sprintf(merge, "%d", nums[k-1]);
+	    	if(strcmp(vname2, varnames[i]) == 0 && type[i] == INT) {
+	    		sprintf(take_int, "%d", nums[i]);
+	    		str_check2 = 1;
+	    		idx_int = i;
 			}
 			k++;
 		}
-		merge[k] = '\0';
-		printf("%s", merge);
+		take_int[k] = '\0';
 		
+	
+	    if(str_check1 && str_check2) {
+	    	// tronca la stringa all'ultimo '.' (mantenendolo)
+	    	char *dot = strrchr(strings[idx_str], '.');
+	    	if(dot != NULL) {
+	    		*(dot + 1) = '\0';
+	    	}
+	    	
+	    	// ricostruisci la stringa con il nuovo numero
+	    	char *tmp = conc(strings[idx_str], take_int);
+	    	free(strings[idx_str]);
+	    	strings[idx_str] = tmp;
+	    	free(take_int);
+		}
+	    
 		
 	  //var statement
 	} else if(strncmp(s, varnames[numvarname-1], strlen(varnames[numvarname-1])) == 0) {
@@ -344,7 +370,7 @@ int main(int argc, char *argv[]) {
 			char op = '\0';
 			while(*s == ' ') s++;
 			
-			while(*s != '(') {
+			while(*s != '{') {
 				
 				if(is_numeric(s)) {
 					intBuffer[i++] = atoi(s);				
@@ -367,7 +393,7 @@ int main(int argc, char *argv[]) {
 					
 					while(*p == ' ' || *p == '\t') p++;
 					
-					if(*p == ')') break;
+					if(*p == '}') break;
 					 	 
 						  exec_line(file, p);
 				     	  
