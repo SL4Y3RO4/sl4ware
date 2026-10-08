@@ -119,6 +119,7 @@ void exec_line(FILE *f, char* s) {
 		string[i] = '\0';
 	    strings[numstr++] = string;
 	    
+	    
 	  //syscall statement  
     } else if(strncmp(s, "syscall", 7) == 0) {
       s = s + 7;
@@ -163,7 +164,7 @@ void exec_line(FILE *f, char* s) {
 			if(strcmp(varname, varnames[i]) == 0) {
 				switch(type[i]) {
 					case INT: printf("%d", nums[i - 1]); break;
-					case STR: printf("%s", strings[i - 1]); break;
+					case STR: printf("%s", strings[i]); break;
 				}
 			
 			}
@@ -197,7 +198,7 @@ void exec_line(FILE *f, char* s) {
 		//increase current variable
 		for(int i = 0; i < numvarname; i++) {
 		   if(strcmp(vname, varnames[i]) == 0) {
-		   	  nums[i] = nums[i] + atoi(integer);
+		   	  nums[i - 1] = nums[i - 1] + atoi(integer);
 		   }	   
 		}
 	
@@ -248,7 +249,7 @@ void exec_line(FILE *f, char* s) {
 	    	if(strcmp(vname2, varnames[i]) == 0 && type[i] == INT) {
 	    		sprintf(take_int, "%d", nums[i]);
 	    		str_check2 = 1;
-	    		idx_int = i;
+	    	//	idx_int = i;
 			}
 			k++;
 		}
@@ -256,19 +257,48 @@ void exec_line(FILE *f, char* s) {
 		
 	
 	    if(str_check1 && str_check2) {
-	    	// tronca la stringa all'ultimo '.' (mantenendolo)
 	    	char *dot = strrchr(strings[idx_str], '.');
 	    	if(dot != NULL) {
 	    		*(dot + 1) = '\0';
 	    	}
 	    	
-	    	// ricostruisci la stringa con il nuovo numero
 	    	char *tmp = conc(strings[idx_str], take_int);
 	    	free(strings[idx_str]);
 	    	strings[idx_str] = tmp;
 	    	free(take_int);
 		}
 	    
+	    
+    } else if(strncmp(s, "read", 4) == 0) {
+    	s = s + 4;
+    	char *varname = malloc(strlen(s) + 1);
+    	int vi = 0;
+    	int idx_int = 0;
+    	int take_input = 0;
+    	
+    	while(*s == ' ') s++;
+    	
+    	
+    	while(*s != ';') {
+    		if(is_numeric(s) || is_letter(s)) {
+    			varname[vi++] = *s;
+			}
+    		s++;
+		}
+		varname[vi] = '\0';
+		
+		int int_smt = 0;
+		
+		for(int i = 0; i < numvarname; i++) {
+			if(strcmp(varname, varnames[i]) == 0) {
+				switch(type[i]) {
+				    case INT: scanf("%d", &nums[i - 1]); break;
+				    case STR: scanf("%s", strings[i - 1]); break;
+				}
+			   	
+			}
+		}
+		
 		
 	  //var statement
 	} else if(strncmp(s, varnames[numvarname-1], strlen(varnames[numvarname-1])) == 0) {

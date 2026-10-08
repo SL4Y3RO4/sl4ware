@@ -1,7 +1,3 @@
-string str = ping -n 1 -w 10 8.8.8.;
 int i = 0;
-    for 1 < 15 {
-    	add i, 1;
-    	mv str, i;
-		syscall str;
-    }
+    read i;
+    print i;
