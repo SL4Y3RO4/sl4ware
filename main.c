@@ -430,10 +430,54 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			
-				
+		  //if statement	
 		} else if(strncmp(s, "if", 2) == 0) {
 			s = s + 2;
+			char op = '\0';
+			char *intBuffer = malloc(strlen(s) + 1);
+			int i = 0;
+			long init_smt = 0;
 			while(*s == ' ') s++;
+			
+			
+			 while(*s != '{') {
+			 	
+			 	if(is_operator(s)) {
+			 		op = *s;
+				 }
+			 	
+			 	if(is_numeric(s)) {
+			 		intBuffer[i++] = *s;
+				}
+			 	s++;
+			 }
+			 intBuffer[i] = '\0';
+			 
+			 int condition = 0;
+			 
+			 switch(op)  {
+			 	 case '<': condition = ; break;
+			 }
+			
+			
+			 while(fgets(lines, 500, file) != NULL) {
+			 	
+			 	lines[strcspn(lines, "\n")] = '\0';
+			 	 	
+			 	char *ifp = lines;
+			 	
+			 	while(*ifp == ' ' || *ifp == '\t') ifp++;
+					
+					if(*ifp == '}') break;
+					 	 
+						  exec_line(file, ifp);
+			 	
+			 }
+			 
+			 free(intBuffer);	
+		
+			 continue;
+			
 		}
 		 exec_line(file, s);
 		   
