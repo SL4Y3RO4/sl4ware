@@ -431,7 +431,10 @@ int main(int argc, char *argv[]) {
 			}
 			
 				
-		} //EOF for
+		} else if(strncmp(s, "if", 2) == 0) {
+			s = s + 2;
+			while(*s == ' ') s++;
+		}
 		 exec_line(file, s);
 		   
 	}
