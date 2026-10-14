@@ -163,7 +163,7 @@ void exec_line(FILE *f, char* s) {
 		for(int i = 0; i < numvarname; i++) {
 			if(strcmp(varname, varnames[i]) == 0) {
 				switch(type[i]) {
-					case INT: printf("%d", nums[i - 1]); break;
+					case INT: printf("%d", nums[i]); break;
 					case STR: printf("%s", strings[i]); break;
 				}
 			
@@ -198,7 +198,7 @@ void exec_line(FILE *f, char* s) {
 		//increase current variable
 		for(int i = 0; i < numvarname; i++) {
 		   if(strcmp(vname, varnames[i]) == 0) {
-		   	  nums[i - 1] = nums[i - 1] + atoi(integer);
+		   	  nums[i] = nums[i] + atoi(integer);
 		   }	   
 		}
 	
@@ -292,8 +292,8 @@ void exec_line(FILE *f, char* s) {
 		for(int i = 0; i < numvarname; i++) {
 			if(strcmp(varname, varnames[i]) == 0) {
 				switch(type[i]) {
-				    case INT: scanf("%d", &nums[i - 1]); break;
-				    case STR: scanf("%s", strings[i - 1]); break;
+				    case INT: scanf("%d", &nums[i]); break;
+				    case STR: scanf("%s", strings[i]); break;
 				}
 			   	
 			}
@@ -310,66 +310,17 @@ void exec_line(FILE *f, char* s) {
 	  
 	  while(*p == ' ' || *p == '\t') p++;
 	  
-	  while(*p && (is_letter(p) || is_numeric(p) || *p == '_')) {
-	        vname[vi++] = *p;  
+	  while(*p != ';') {
+	  	    if(is_numeric(s) || is_letter(s)) {
+	  	    	vname[vi++] = *p; 
+			}      
 			p++; 
 	  }
 	  vname[vi] = '\0';
 	  
-	   int idx = find_var(vname);
-	   if (idx < 0) {
-	  	  return;
-	   }
-	  
-	  s = p;  
-	  char *intBuffer = malloc(strlen(p) + 1);
-	  char *varname = malloc(strlen(p) + 1);
-	  
 	  while(*s == ' ') s++;
 	  
-	  //++ 
-	  if(strncmp(s, "++", 2) == 0 && type[idx] == INT) { 
-	  	 	nums[idx]++; 
-	  }
-	  //--
-	  if(strncmp(s, "--", 2) == 0 && type[idx] == INT) {
-	  	 	nums[idx]--; 	 
-      }
-	  
-	  if(*s == '=' && type[idx] == INT) {
-	  	 s++;
-	  	 while(*s != ';') {
-	  	 	if(is_numeric(s)) {
-	  	 		intBuffer[i++] = *s;
-			}	
-	  	 	s++;
-		   }
-		   intBuffer[i] = '\0';
-		   
-		   nums[idx] = atoi(intBuffer);
-	  }
-	  i = 0;
-	  if(*s == ',' && type[idx] == STR) {
-	  	 s++;
-	  	 while(*s != ';') {
-	  	 	if(is_numeric(s) || is_letter(s)) {
-	  	 		varname[i++] = *s;
-			}
-	  	 	s++;
-		 }
-	  }
-	  varname[i] = '\0';
-	  
-	   if (type[idx] == STR && varname[0] != '\0') {
-	  	  int other = find_var(varname);
-	  	  if (other >= 0 && type[other] == INT) {
-
-	  	  	  char tmp[600];
-	  	  	  snprintf(tmp, sizeof(tmp), "%s%d", strings[idx], nums[other]);
-	  	  	  free(strings[idx]);
-	  	  	  strings[idx] = strdup(tmp);
-	  	  }
-	  }
+	  printf("%s", vname);
 	  
 	  
 	} //EOF var
@@ -456,7 +407,11 @@ int main(int argc, char *argv[]) {
 			 int condition = 0;
 			 
 			 switch(op)  {
-			 	 case '<': condition = ; break;
+			 	 case '<': condition = intBuffer[0] < intBuffer[1]; break;
+			 	 case '>': condition = intBuffer[0] > intBuffer[1]; break;
+			 	 case '=': condition = intBuffer[0] == intBuffer[1]; break;
+			 	 case '!': condition = intBuffer[0] != intBuffer[1]; break;
+
 			 }
 			
 			
@@ -470,9 +425,10 @@ int main(int argc, char *argv[]) {
 					
 					if(*ifp == '}') break;
 					 	 
+					 	 if(condition) {
 						  exec_line(file, ifp);
-			 	
-			 }
+					     }	
+			    }
 			 
 			 free(intBuffer);	
 		
