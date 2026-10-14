@@ -307,11 +307,17 @@ void exec_line(FILE *f, char* s) {
 	  int i = 0;
 	  int vi = 0;
 	  int check = 0;
+	  int is_increaser = 0;
 	  
 	  while(*p == ' ' || *p == '\t') p++;
 	  
 	  while(*p != ';') {
-	  	    if(is_numeric(s) || is_letter(s)) {
+	  	
+	  		if(strncmp(p, "++", 2) == 0) {
+	  	 		is_increaser = 1;
+	  		}
+	  
+	  	    if(is_numeric(p) || is_letter(p)) {
 	  	    	vname[vi++] = *p; 
 			}      
 			p++; 
@@ -320,7 +326,13 @@ void exec_line(FILE *f, char* s) {
 	  
 	  while(*s == ' ') s++;
 	  
-	  printf("%s", vname);
+	  
+	  for(int i = 0; i < numvarname; i++) {
+	  		if(strcmp(vname, varnames[i]) == 0 && type[i] == INT && is_increaser) {
+	  			nums[i] = nums[i] + 1;
+			}
+	  	
+	  }
 	  
 	  
 	} //EOF var
